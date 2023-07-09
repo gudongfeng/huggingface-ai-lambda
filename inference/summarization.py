@@ -1,3 +1,4 @@
+import json
 from transformers import pipeline
 
 # voiceToText = pipeline("automatic-speech-recognition")
@@ -5,9 +6,13 @@ from transformers import pipeline
 voiceToText = pipeline("summarization", model="t5-small")
 
 def handler(event, context):
-    result = voiceToText(event['input'])
+    body = json.loads(event['body'])
+    result = voiceToText(body['input'])
     response = {
         "statusCode": 200,
-        "body": result
+        "headers": {
+            "Access-Control-Allow-Origin": "*"
+        },
+        "body": json.dumps(result[0])
     }
     return response
